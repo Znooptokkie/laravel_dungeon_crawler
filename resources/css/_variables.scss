@@ -1,0 +1,17 @@
+// Kleuren
+$color-bg-dark: #17161c;      // achtergrond, diep donker
+$color-stone: #2e2b36;        // kamer-kader, "steen"
+$color-stone-light: #423e4d;  // iets lichtere variant, voor randen/hover
+$color-accent: #c9a04d;       // fakkel-goud, voor belangrijke knoppen/tekst
+$color-danger: #8b2c2c;       // gevaar/gevecht, HP-balk vijand
+$color-success: #4a7c4e;      // HP-balk speler, bevestigingen
+$color-text: #e8e3d8;         // hoofdtekst, lichte perkamentkleur
+$color-text-muted: #948d7f;   // minder belangrijke tekst (bv. log)
+
+// Typografie
+$font-dungeon: 'Courier New', monospace;
+
+// Spacing (optioneel, maar handig om consistent te blijven)
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
