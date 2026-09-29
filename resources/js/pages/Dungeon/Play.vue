@@ -1,15 +1,16 @@
 <script setup>
-import RoomView from '../../components/dungeon/RoomView.vue';
-import PanelView from '@/components/panels/PanelView.vue';
+    import RoomView from '../../components/dungeon/RoomView.vue';
+    import PanelView from '@/components/panels/PanelView.vue';
 
-const props = defineProps({
-    room: Number,
-    lastInput: String,
-    message: String,
-    messageID: Number,
-    hasChest: Boolean,
-    chestOpened: Boolean,
-});
+    const props = defineProps({
+        playerName: String,
+        room: Number,
+        lastInput: String,
+        message: String,
+        messageID: Number,
+        hasChest: Boolean,
+        chestOpened: Boolean,
+    });
 
 </script>
 
@@ -24,9 +25,10 @@ const props = defineProps({
         </div>
 
         <div class="control-panel">
-            <PanelView 
-                :message="props.message" 
+            <PanelView
+                :message="props.message"
                 :messageID="props.messageID"
+                :player-name="props.playerName"
             />
         </div>
     </div>

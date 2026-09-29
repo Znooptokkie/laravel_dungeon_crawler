@@ -4,15 +4,17 @@
 
     const props = defineProps({
         message: String,
-        messageID: Number
+        messageID: Number,
+        playerName: String,
     })
 </script>
 
 <template>
     <div class="chat-panel">
-        <OutputBoxPanel 
-            :message="props.message" 
-            :messageID="props.messageID"    
+        <OutputBoxPanel
+            :message="props.message"
+            :messageID="props.messageID"
+            :player-name="playerName"
         />
 
         <InputBoxPanel/>
@@ -21,7 +23,7 @@
 
 <style scoped lang="scss">
     @import "../../../css/variables";
-    
+
     .chat-panel
     {
         width: 40%;

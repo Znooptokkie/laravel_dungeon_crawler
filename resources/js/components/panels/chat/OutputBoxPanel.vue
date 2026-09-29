@@ -1,32 +1,40 @@
 <script setup>
     import { ref, watch } from "vue";
 
-const props = defineProps({
-    message: String,
-    messageID: Number
-})
+    const props = defineProps({
+        message: String,
+        messageID: Number,
+        playerName: String,
+    })
 
-const outputStringsArray = ref([])
-outputStringsArray.value.push(props.message)
+    const outputStringsArray = ref([])
+    outputStringsArray.value.push(props.message)
 
-// Watch the messageID
-// Because messageID is unique, there will always be an update
-watch(
-    () => props.messageID,
-    () => {
-        if (outputStringsArray.value.length === 10)
-            outputStringsArray.value.shift()
+    // Watch the messageID
+    // Because messageID is unique, there will always be an update
+    // So there will always be a new message shown
+    watch(
+        () => props.messageID,
+        () => {
+            if (outputStringsArray.value.length === 10)
+                outputStringsArray.value.shift()
 
-        outputStringsArray.value.push(props.message)
-    }
-)
-    
+            outputStringsArray.value.push(props.message)
+        }
+    )
+
 </script>
 
 <template>
     <div class="chat-output-panel">
-        <p v-for="message in outputStringsArray">
-             {{ message }}
+        <p v-for="message in outputStringsArray" :key="message">
+            <span v-if="message.includes(playerName)">
+                {{ message.split(playerName)[0] }}<strong>{{ playerName }}</strong>{{ message.split(playerName)[1] }}
+            </span>
+
+            <span v-else>
+                {{ message }}
+            </span>
         </p>
     </div>
 </template>
