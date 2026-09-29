@@ -7,12 +7,13 @@ const props = defineProps({
 })
 
 const outputStringsArray = ref([])
+outputStringsArray.value.push(props.message)
 
 // Watch the messageID
 // Because messageID is unique, there will always be an update
 watch(
     () => props.messageID,
-    (newMessageID) => {
+    () => {
         if (outputStringsArray.value.length === 10)
             outputStringsArray.value.shift()
 
@@ -20,7 +21,6 @@ watch(
     }
 )
     
-
 </script>
 
 <template>

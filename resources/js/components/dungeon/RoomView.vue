@@ -5,7 +5,7 @@
 
     defineProps({
         room: Number,
-        message: String,
+        // message: String,
         hasChest: Boolean,
         chestOpened: Boolean,
         boss: { type: Object, default: null }, // { name, hp, maxHp } — later toegevoegd vanuit de backend
@@ -41,7 +41,7 @@
 
             <!-- <ChestAsset v-if="hasChest" :opened="chestOpened" /> -->
 
-        <p class="message">{{ message }}</p>
+        <!-- <p class="message">{{ message }}</p> -->
     </div>
 </template>
 

@@ -8,7 +8,7 @@
     function move() 
     {
         form.input = commandInput.value;
-        form.post('/dungeon/move');
+        form.post('/dungeon/input');
         commandInput.value = '';
     }
 </script>
