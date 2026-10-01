@@ -12,6 +12,14 @@
         messageID: Number,
         hasChest: Boolean,
         chestOpened: Boolean,
+        combatLevel: Number,
+        hitpoints: Number,
+        magic: Number,
+        stamina: Number,
+        attack: Number,
+        defence: Number,
+        lockpicking: Number,
+        pointsLeft: Number,
     });
 
 </script>
@@ -25,7 +33,7 @@
                 :has-chest="hasChest"
                 :chest-opened="chestOpened"
             />
-            <p>{{ doors?.length }}</p>
+            <!-- <p>{{ doors?.length }}</p> -->
         </div>
 
         <div class="control-panel">
@@ -33,6 +41,14 @@
                 :message="props.message"
                 :messageID="props.messageID"
                 :player-name="props.playerName"
+                :combat-level="props.combatLevel"
+                :hitpoints="props.hitpoints"
+                :magic="props.magic"
+                :stamina="props.stamina"
+                :attack="props.attack"
+                :defence="props.defence"
+                :lockpicking="props.lockpicking"
+                :points-left="props.pointsLeft"
             />
         </div>
 
@@ -50,6 +66,7 @@
         display: flex;
         flex-direction: column;
         box-sizing: border-box;
+        background: $color-bg-dark;
     }
 
     .dungeon
@@ -57,9 +74,9 @@
         flex: 3;
         width: 100%;
         min-height: 0;
-
         font-family: $font-dungeon;
         color: $color-text;
+        margin-bottom: .2rem;
     }
 
     .control-panel
@@ -67,7 +84,8 @@
         flex: 1;
         width: 100%;
         min-height: 0;
-
         display: flex;
+        gap: .3rem;
+        margin: .3rem;
     }
 </style>

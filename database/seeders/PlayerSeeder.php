@@ -14,11 +14,11 @@ class PlayerSeeder extends Seeder
     public function run(): void
     {
         Player::create([
-            'name' => 'Admin',
-            'combat_level' => 1,
-            'hitpoints' => 1,
+            'name' => 'Dungeon Master',
+            'combat_level' => 99,
+            'hitpoints' => 10,
             'magic' => 1,
-            'stamina' => 1,
+            'stamina' => 20,
             'attack' => 1,
             'defence' => 1,
             'lockpicking' => 1,

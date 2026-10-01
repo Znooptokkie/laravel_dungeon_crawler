@@ -51,7 +51,7 @@
         color: $color-text-muted;
         caret-color: $color-text-muted;
         border: 1px solid $color-stone-light;
-        padding: .5rem;
+        padding: .3rem;
         font-family: $font-dungeon;
         font-size: 1rem;
 

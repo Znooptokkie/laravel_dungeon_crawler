@@ -44,9 +44,21 @@ class DungeonController extends Controller
             "messageID" => session("message_id", 0)
         ];
 
+        $statsProperties = [
+            "combatLevel" => $player->combat_level,
+            "hitpoints" => $player->hitpoints,
+            "magic" => $player->magic,
+            "stamina" => $player->stamina,
+            "attack" => $player->attack,
+            "defence" => $player->defence,
+            "lockpicking" => $player->lockpicking,
+            "pointsLeft" => $player->points_left
+        ];
+
         return Inertia::render("Dungeon/Play", array_merge(
             $playerProperties,
-            $inputProperties
+            $inputProperties,
+            $statsProperties
         ));
     }
 
