@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger("room_id");
             $table->foreign("room_id")->references("room_id")->on("rooms")->onDelete("cascade");
 
+            $table->enum("door_side", ["left", "front", "right", "back"]);
             $table->timestamps();
         });
     }

@@ -24,7 +24,9 @@ class MenuController extends Controller
         ]);
 
         session([
-            "player_id"=>$newPlayer->player_id
+            "player_id" => $newPlayer->player_id,
+            "message" => "Welcome adventurer " . $newPlayer->name . ".",
+            "message_id" => 1
         ]);
 
         return redirect("/dungeon");
@@ -32,14 +34,16 @@ class MenuController extends Controller
 
     public function continueGame()
     {
-        $player = Player::first();
-        // $player = Player::find(session("player_id"));
+        $player = Player::latest()->first();
 
         $message = "Welcome back " . $player->name . "!";
         $messageID = session("message_id", 0) + 1;
 
-        session(["message" => $message]);
-        session(["message_id" => $messageID]);
+        session([
+            "player_id" => $player->player_id,
+            "message" => $message,
+            "message_id" => $messageID
+        ]);
 
         return redirect()->route("dungeon.play");
     }

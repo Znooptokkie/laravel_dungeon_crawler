@@ -1,20 +1,18 @@
 <script setup>
     import DoorAsset from '../assets/DoorAsset.vue';
-    // import ChestAsset from '../assets/ChestAsset.vue';
-    // import BossEntity from '../entities/BossEntity.vue';
 
     defineProps({
-        room: Number,
-        // message: String,
+        dungeonLevel: Number,
+        doors: Array,
         hasChest: Boolean,
         chestOpened: Boolean,
-        boss: { type: Object, default: null }, // { name, hp, maxHp } — later toegevoegd vanuit de backend
+        boss: { type: Object, default: null },
     });
 </script>
 
 <template>
     <div class="room">
-        <h1>Kamer {{ room }}</h1>
+        <h1>Dungeon Level {{ dungeonLevel }}</h1>
         <svg class="room-outline" viewBox="0 0 1000 600" preserveAspectRatio="none">
             <path
                 d="M 0 600 L 250 300 L 750 300 L 1000 600"
@@ -26,7 +24,7 @@
                 stroke="black"
                 stroke-width=3
             />
-            <path 
+            <path
                 d="M 750 300 L 750 0"
                 stroke="black"
                 stroke-width=3
@@ -34,10 +32,14 @@
         </svg>
         <!-- <BossEntity v-if="boss" :name="boss.name" :hp="boss.hp" :max-hp="boss.maxHp" /> -->
 
-            <div class="doors">
-                <DoorAsset side="front" />
-                <DoorAsset side="right" />
-            </div>
+        <div class="doors">
+            <DoorAsset
+                v-for="door in doors"
+                :key="door.door_id"
+                :side="door.pivot.door_side"
+                :locked="door.is_locked"
+            />
+        </div>
 
             <!-- <ChestAsset v-if="hasChest" :opened="chestOpened" /> -->
 
@@ -48,7 +50,7 @@
 <style scoped lang="scss">
     @import '../../../css/_variables';
 
-    .room 
+    .room
     {
         position: relative;
         height: 100%;
@@ -59,13 +61,13 @@
         text-align: center;
     }
 
-    .doors 
+    .doors
     {
-        display: flex;
-        justify-content: center;
+        position: absolute;
+        inset: 0;
     }
 
-    .message 
+    .message
     {
         color: $color-text-muted;
         margin-top: $spacing-md;

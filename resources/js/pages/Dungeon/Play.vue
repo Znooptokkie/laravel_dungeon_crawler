@@ -4,7 +4,9 @@
 
     const props = defineProps({
         playerName: String,
-        room: Number,
+        dungeonLevel: Number,
+        // room: Number,
+        doors: Array,
         lastInput: String,
         message: String,
         messageID: Number,
@@ -18,10 +20,12 @@
     <div class="page">
         <div class="dungeon">
             <RoomView
-                :room="room"
+                :dungeon-level="dungeonLevel"
+                :doors="doors"
                 :has-chest="hasChest"
                 :chest-opened="chestOpened"
             />
+            <p>{{ doors?.length }}</p>
         </div>
 
         <div class="control-panel">
@@ -31,7 +35,9 @@
                 :player-name="props.playerName"
             />
         </div>
+
     </div>
+
 </template>
 
 <style scoped lang="scss">

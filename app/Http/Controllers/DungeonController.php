@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 use App\Models\Player;
+use App\Models\Room;
+use App\Models\RoomsDungeonLevel;
 
 class DungeonController extends Controller
 {
@@ -13,13 +15,39 @@ class DungeonController extends Controller
     {
         $player = Player::find(session("player_id"));
 
-        return Inertia::render('Dungeon/Play', [
+        $dungeonLevelNumber = $player->at_dungeon_level;
+
+        $roomId = session("room");
+
+        if ($roomId === null)
+        {
+            $roomId = RoomsDungeonLevel::where(
+                "dungeon_level_id",
+                $dungeonLevelNumber
+            )->value("room_id");
+
+            session(["room" => $roomId]);
+        }
+
+        $room = Room::find($roomId);
+
+        $playerProperties = [
             "playerName" => $player->name,
-            'room' => session('room', 1),
-            'lastInput' => session('last_input', ''),
-            'message' => session('message', 'Welcome adventurer ' . $player->name . '.'),
+            "dungeonLevel" => $dungeonLevelNumber,
+            "room" => $room,
+            "doors" => $room->doors
+        ];
+
+        $inputProperties = [
+            "lastInput" => session("last_input", ""),
+            "message" => session("message", ""),
             "messageID" => session("message_id", 0)
-        ]);
+        ];
+
+        return Inertia::render("Dungeon/Play", array_merge(
+            $playerProperties,
+            $inputProperties
+        ));
     }
 
     public function incrementMessageID()
@@ -29,10 +57,18 @@ class DungeonController extends Controller
 
     public function input(Request $request)
     {
-        $validated = $request->validate(['input' => 'required|string|max:100']);
-        $input = strtolower($validated['input']);
+        $validated = $request->validate([
+            "input" => "required|string|max:100"
+        ]);
 
-        if (str_contains($input, 'left') || str_contains($input, 'right'))
+        $input = strtolower($validated["input"]);
+
+        if (
+            $input === "left" ||
+            $input === "right" ||
+            $input === "front" ||
+            $input === "back"
+        )
         {
             return $this->move($input);
         }
@@ -45,27 +81,78 @@ class DungeonController extends Controller
             $message = 'Invalid command! Try "help".';
             $messageID = $this->incrementMessageID();
 
-            session(["message" => $message]);
-            session(["message_id" => $messageID]);
+            session([
+                "message" => $message,
+                "message_id" => $messageID
+            ]);
         }
 
-        return redirect()->route('dungeon.play');
+        return redirect()->route("dungeon.play");
     }
 
     public function move(String $input)
     {
-        $room = session('room', 1);
-        $room++;
+        $currentRoomId = session("room");
+        $currentRoom = Room::find($currentRoomId);
 
-        $message = "You go to the next room.";
+        $door = $currentRoom->doors()
+            ->wherePivot("door_side", $input)
+            ->first();
+
+        if ($door === null)
+        {
+            $message = "There is no door on that side.";
+            $messageID = $this->incrementMessageID();
+
+            session([
+                "message" => $message,
+                "message_id" => $messageID
+            ]);
+
+            return redirect()->route("dungeon.play");
+        }
+
+        if ($door->is_locked)
+        {
+            $message = "The door is locked.";
+            $messageID = $this->incrementMessageID();
+
+            session([
+                "message" => $message,
+                "message_id" => $messageID
+            ]);
+
+            return redirect()->route("dungeon.play");
+        }
+
+        $nextRoom = $door->rooms()
+            ->where("rooms.room_id", "!=", $currentRoomId)
+            ->first();
+
+        if ($nextRoom === null)
+        {
+            $message = "This door does not lead anywhere.";
+            $messageID = $this->incrementMessageID();
+
+            session([
+                "message" => $message,
+                "message_id" => $messageID
+            ]);
+
+            return redirect()->route("dungeon.play");
+        }
+
+        $message = "You go through the door.";
         $messageID = $this->incrementMessageID();
 
-        session(['room' => $room]);
-        session(["last_input" => $input]);
-        session(['message' => $message]);
-        session(["message_id" => $messageID]);
+        session([
+            "room" => $nextRoom->room_id,
+            "last_input" => $input,
+            "message" => $message,
+            "message_id" => $messageID
+        ]);
 
-        return redirect()->route('dungeon.play');
+        return redirect()->route("dungeon.play");
     }
 
     public function reset()
@@ -74,15 +161,17 @@ class DungeonController extends Controller
         $messageID = $this->incrementMessageID();
 
         session()->forget([
-            'room',
-            'last_input',
-            'message',
-            'message_id',
+            "room",
+            "last_input",
+            "message",
+            "message_id",
         ]);
 
-        session(["message" => $message]);
-        session(["message_id" => $messageID]);
+        session([
+            "message" => $message,
+            "message_id" => $messageID
+        ]);
 
-        return redirect()->route('dungeon.play');
+        return redirect()->route("dungeon.play");
     }
 }

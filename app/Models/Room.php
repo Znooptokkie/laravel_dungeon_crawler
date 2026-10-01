@@ -19,4 +19,14 @@ class Room extends Model
     {
         return $this->belongsTo(Chest::class, "chest_id", "chest_id");
     }
+
+    public function doors()
+    {
+        return $this->belongsToMany(
+            Door::class,
+            "doors_rooms",
+            "room_id",
+            "door_id"
+        )->withPivot("door_side");
+    }
 }

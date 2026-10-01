@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('doors', function (Blueprint $table) {
             $table->id("door_id");
-            $table->enum("door_side", ["left", "front", "right"]);
             $table->boolean("is_locked");
 
-            $table->unsignedBigInteger("key_id")->unique();
+            $table->unsignedBigInteger("key_id")->nullable();
             $table->foreign("key_id")->references("key_id")->on("keys")->onDelete("cascade");
 
             $table->timestamps();

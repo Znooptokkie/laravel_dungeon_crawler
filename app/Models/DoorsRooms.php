@@ -14,7 +14,8 @@ class DoorsRooms extends Model
 
     protected $fillable = [
         "door_id",
-        "room_id"
+        "room_id",
+        "door_side"
     ];
 
     public function door()

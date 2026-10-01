@@ -1,16 +1,21 @@
 <script setup>
-    import { ref } from 'vue';
+    import { ref, onMounted } from 'vue';
     import { useForm } from '@inertiajs/vue3';
 
     const commandInput = ref('');
     const form = useForm({ input: '' });
 
-    function move() 
+    function move()
     {
         form.input = commandInput.value;
         form.post('/dungeon/input');
         commandInput.value = '';
     }
+    // Zorg dat 100% het inputveld altijd gefocused bij starten van dungeon
+    onMounted(() =>
+    {
+        document.querySelector('.chat-input-panel input')?.focus();
+    });
 </script>
 
 <template>
@@ -34,12 +39,12 @@
         flex-shrink: 0;
     }
 
-    form 
+    form
     {
         display: flex;
     }
 
-    input 
+    input
     {
         flex: 1;
         background: $color-stone;
