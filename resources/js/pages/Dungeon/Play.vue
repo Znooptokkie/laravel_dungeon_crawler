@@ -5,7 +5,6 @@
     const props = defineProps({
         playerName: String,
         dungeonLevel: Number,
-        // room: Number,
         doors: Array,
         lastInput: String,
         message: String,
@@ -20,6 +19,9 @@
         defence: Number,
         lockpicking: Number,
         pointsLeft: Number,
+        roomInfo: Array,
+        direction: Number,
+        room: Object,
     });
 
 </script>
@@ -33,7 +35,6 @@
                 :has-chest="hasChest"
                 :chest-opened="chestOpened"
             />
-            <!-- <p>{{ doors?.length }}</p> -->
         </div>
 
         <div class="control-panel">
@@ -49,6 +50,9 @@
                 :defence="props.defence"
                 :lockpicking="props.lockpicking"
                 :points-left="props.pointsLeft"
+                :room-info="props.roomInfo"
+                :direction="props.direction"
+                :room="props.room"
             />
         </div>
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DoorsRooms;
+use App\Models\DungeonLevel;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,7 +15,7 @@ class DungeonController extends Controller
 {
     public function index()
     {
-        $player = Player::find(session("player_id"));
+        $player = $this->getPlayer();
 
         $dungeonLevelNumber = $player->at_dungeon_level;
 
@@ -34,7 +36,6 @@ class DungeonController extends Controller
         $playerProperties = [
             "playerName" => $player->name,
             "dungeonLevel" => $dungeonLevelNumber,
-            "room" => $room,
             "doors" => $room->doors
         ];
 
@@ -55,10 +56,17 @@ class DungeonController extends Controller
             "pointsLeft" => $player->points_left
         ];
 
+        $miniMapProperties = [
+            "roomInfo" => $this->defineRoomsForMap(),
+            "direction" => session("direction"),
+            "room" => $room,
+        ];
+
         return Inertia::render("Dungeon/Play", array_merge(
             $playerProperties,
             $inputProperties,
-            $statsProperties
+            $statsProperties,
+            $miniMapProperties,
         ));
     }
 
@@ -75,7 +83,8 @@ class DungeonController extends Controller
 
         $input = strtolower($validated["input"]);
 
-        if (
+        if
+        (
             $input === "left" ||
             $input === "right" ||
             $input === "front" ||
@@ -154,6 +163,10 @@ class DungeonController extends Controller
             return redirect()->route("dungeon.play");
         }
 
+        // Logica voor de minimap om de driehoek te tekenen
+        // welke richting de speler naartoe kijkt
+        $this->defineMapDirection($input);
+
         $message = "You go through the door.";
         $messageID = $this->incrementMessageID();
 
@@ -161,10 +174,51 @@ class DungeonController extends Controller
             "room" => $nextRoom->room_id,
             "last_input" => $input,
             "message" => $message,
-            "message_id" => $messageID
+            "message_id" => $messageID,
         ]);
 
         return redirect()->route("dungeon.play");
+    }
+
+    public function defineMapDirection(String $input)
+    {
+        $currentDirection = session("direction");
+        $directionHistory = session("direction_history", []);
+
+        if ($currentDirection == null)
+        {
+            $currentDirection = 0;
+        }
+
+        $newDirection = $currentDirection;
+
+        if ($input == "front")
+        {
+            $newDirection = $currentDirection;
+            $directionHistory[] = $currentDirection;
+        }
+        else if ($input == "right")
+        {
+            $newDirection = ($currentDirection + 1) % 4;
+            $directionHistory[] = $currentDirection;
+        }
+        else if ($input == "left")
+        {
+            $newDirection = ($currentDirection - 1 + 4) % 4;
+            $directionHistory[] = $currentDirection;
+        }
+        else if ($input == "back")
+        {
+            if (!empty($directionHistory))
+            {
+                $newDirection = array_pop($directionHistory);
+            }
+        }
+
+        session([
+            "direction" => $newDirection,
+            "direction_history" => $directionHistory,
+        ]);
     }
 
     public function reset()
@@ -177,6 +231,8 @@ class DungeonController extends Controller
             "last_input",
             "message",
             "message_id",
+            "direction",
+            "direction_history"
         ]);
 
         session([
@@ -185,5 +241,24 @@ class DungeonController extends Controller
         ]);
 
         return redirect()->route("dungeon.play");
+    }
+
+    public function getPlayer()
+    {
+        return Player::find(session("player_id"));
+    }
+
+    public function defineRoomsForMap()
+    {
+        $player = $this->getPlayer();
+        $dungeonLevel = $player->at_dungeon_level;
+
+        $getRoomInfo = DoorsRooms::select([
+            "door_id",
+            "room_id",
+            "door_side"
+        ])->get();
+
+        return $getRoomInfo;
     }
 }

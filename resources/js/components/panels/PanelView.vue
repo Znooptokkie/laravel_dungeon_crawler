@@ -1,6 +1,7 @@
 <script setup>
     import InputBoxPanel from './chat/InputBoxPanel.vue';
     import OutputBoxPanel from './chat/OutputBoxPanel.vue';
+    import MinimapPanel from './navigating/MinimapPanel.vue';
     import CombatLevelPanel from './stats/CombatLevelPanel.vue';
     import StatPointPanel from './stats/StatPointPanel.vue';
     import StatsPanel from './stats/StatsPanel.vue';
@@ -17,6 +18,9 @@
         defence: Number,
         lockpicking: Number,
         pointsLeft: Number,
+        roomInfo: Array,
+        direction: Number,
+        room: Object
     })
 </script>
 
@@ -46,6 +50,13 @@
 
         <StatPointPanel
             :points-left="props.pointsLeft"
+        />
+    </div>
+    <div class="map-panel">
+        <MinimapPanel
+            :room-info="props.roomInfo"
+            :direction="props.direction"
+            :room="props.room"
         />
     </div>
 </template>
