@@ -22,6 +22,7 @@
         roomInfo: Array,
         direction: Number,
         room: Object,
+        inventoryItems: Object,
     });
 
 </script>
@@ -53,6 +54,7 @@
                 :room-info="props.roomInfo"
                 :direction="props.direction"
                 :room="props.room"
+                :inventory-items="props.inventoryItems"
             />
         </div>
 

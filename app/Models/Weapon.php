@@ -12,10 +12,12 @@ class Weapon extends Model
     protected $keyType = "int";
 
     protected $fillable = [
-        "weapon_name",
+        "name",
+        "damage",
         "health_added",
         "magic_added",
         "stamina_added",
+        "icon_url",
         "item_id"
     ];
 

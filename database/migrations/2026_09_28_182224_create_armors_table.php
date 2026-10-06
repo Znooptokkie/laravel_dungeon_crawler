@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('armors', function (Blueprint $table) {
             $table->id("armor_id");
-            $table->string("armor_name");
+            $table->string("name");
             $table->integer("armor_added")->default(0);
-            $table->string("armor_part");
+            $table->string("armor_part")->default("body");
             $table->integer("health_added")->default(0);
             $table->integer("magic_added")->default(0);
             $table->integer("stamina_added")->default(0);
-
+            $table->string("icon_url")->default("");
             $table->unsignedBigInteger("item_id");
             $table->foreign("item_id")->references("item_id")->on("items")->onDelete("cascade");
 

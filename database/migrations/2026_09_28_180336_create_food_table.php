@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('food', function (Blueprint $table) {
             $table->id("food_id");
-            $table->string("food_name");
+            $table->string("name");
             $table->integer("health_added")->default(0);
             $table->integer("magic_added")->default(0);
             $table->integer("stamina_added")->default(0);
-
+            $table->string("icon_url")->default("");
             $table->unsignedBigInteger("item_id");
             $table->foreign("item_id")->references("item_id")->on("items")->onDelete("cascade");
 

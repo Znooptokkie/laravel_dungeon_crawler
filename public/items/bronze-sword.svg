@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <g shape-rendering="crispEdges">
+    <!-- shadow -->
+    <path d="M9 53h30v4H9z" fill="#17151a" opacity=".45"/>
+    <!-- blade outline -->
+    <path d="M30 7h8v5h4v8h4v8h4v8h4v8h-5v5h-5v-4h-7v-5h-6v-6h-6v-6h-5v-5h-5v-8h4v-5h6v-3h10z" fill="#302b2b"/>
+    <!-- blade -->
+    <path d="M31 11h6v5h4v8h4v8h4v8h-5v4h-6v-5h-6v-6h-6v-6h-5v-5h-4v-4h8v-4h6z" fill="#b9b4aa"/>
+    <!-- blade highlight -->
+    <path d="M32 12h4v5h4v8h4v8h-4v-7h-4v-7h-4z" fill="#e3ded1"/>
+    <!-- bronze guard -->
+    <path d="M14 37h8v-4h5v4h12v5h-8v5h-5v-5H14z" fill="#6f4425"/>
+    <path d="M16 38h10v-3h3v3h8v2H16z" fill="#b87333"/>
+    <path d="M27 42h5v12h-5z" fill="#5a3423"/>
+    <!-- grip -->
+    <path d="M26 44h7v10h-7z" fill="#6b3f28"/>
+    <path d="M26 46h7v2h-7zM26 50h7v2h-7z" fill="#9a5c32"/>
+    <!-- pommel -->
+    <path d="M24 54h11v4H24z" fill="#5a3423"/>
+    <path d="M26 54h7v2h-7z" fill="#b87333"/>
+    <!-- bronze accents -->
+    <path d="M14 38h5v2h-5zM33 38h6v2h-6z" fill="#d08a3d"/>
+  </g>
+</svg>

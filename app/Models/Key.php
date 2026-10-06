@@ -12,7 +12,9 @@ class Key extends Model
     protected $keyType = "int";
 
     protected $fillable = [
+        "name",
         "color",
+        "icon_url",
         "item_id"
     ];
 

@@ -12,10 +12,11 @@ class Potion extends Model
     protected $keyType = "int";
 
     protected $fillable = [
-        "potion_name",
+        "name",
         "health_restored",
         "magic_restored",
         "stamina_restored",
+        "icon_url",
         "item_id",
     ];
 

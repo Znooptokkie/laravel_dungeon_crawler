@@ -22,5 +22,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DungeonLevelSeeder::class,
         ]);
+
+        $this->call([
+            ItemSeeder::class,
+        ]);
     }
 }

@@ -1,6 +1,7 @@
 <script setup>
     import InputBoxPanel from './chat/InputBoxPanel.vue';
     import OutputBoxPanel from './chat/OutputBoxPanel.vue';
+    import InventoryPanel from './inventory/InventoryPanel.vue';
     import MinimapPanel from './navigating/MinimapPanel.vue';
     import CombatLevelPanel from './stats/CombatLevelPanel.vue';
     import StatPointPanel from './stats/StatPointPanel.vue';
@@ -20,7 +21,8 @@
         pointsLeft: Number,
         roomInfo: Array,
         direction: Number,
-        room: Object
+        room: Object,
+        inventoryItems: Object,
     })
 </script>
 
@@ -59,6 +61,11 @@
             :room="props.room"
         />
     </div>
+    <div class="inventory-panel">
+        <InventoryPanel
+            :inventory-items="props.inventoryItems"
+        />
+    </div>
 </template>
 
 <style scoped lang="scss">
@@ -84,5 +91,15 @@
         display: flex;
         flex-direction: column;
         margin-bottom: .3rem;
+    }
+
+    .inventory-panel
+    {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: .25rem;
+        padding: .25rem;
+        background: $color-stone;
+        width: 34%; // Waarde klopt niet, maar werkt voor mijn pc
     }
 </style>

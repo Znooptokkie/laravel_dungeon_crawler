@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\DungeonController;
+
 use Illuminate\Support\Facades\Route;
 
 // Menu page

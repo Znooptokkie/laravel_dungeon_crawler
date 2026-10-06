@@ -2,17 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Armor;
 use App\Models\DoorsRooms;
 use App\Models\DungeonLevel;
+use App\Models\Inventory;
+use App\Models\InventoryItem;
+use App\Models\Item;
+use App\Models\Key;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 use App\Models\Player;
+use App\Models\Potion;
 use App\Models\Room;
 use App\Models\RoomsDungeonLevel;
+use App\Models\Weapon;
+use App\Models\Food;
+use App\Services\InventoryService;
 
 class DungeonController extends Controller
 {
+    public function __construct(
+        private InventoryService $inventoryService
+    ) {}
+
     public function index()
     {
         $player = $this->getPlayer();
@@ -62,11 +75,43 @@ class DungeonController extends Controller
             "room" => $room,
         ];
 
+        // $getInventoryID = Inventory::where("player_id", $player->player_id)->first();
+        // $inventoryItems = InventoryItem::where("inventory_id", $getInventoryID->inventory_id)->get();
+
+        // $allInventoryItems = [];
+        // $classValues = [
+        //     "key" => Key::class,
+        //     "potion" => Potion::class,
+        //     "weapon" => Weapon::class,
+        //     "armor" => Armor::class,
+        //     "food" => Food::class,
+        // ];
+
+        // foreach ($inventoryItems as $item)
+        // {
+        //     $itemID = $item->item_id;
+        //     $getItemType = Item::find($itemID);
+        //     $getItem = $classValues[$getItemType->type]::where("item_id", $itemID)->first();
+
+        //     $allInventoryItems[] = [
+        //         "itemName" => $getItem->name,
+        //         "slot" => $item->slot,
+        //         "quantity" => $item->quantity
+        //     ];
+        // };
+
+        $inventoryItems = $this->getInventoryItems();
+
+        $inventoryProperties = [
+            "inventoryItems" => $inventoryItems,
+        ];
+
         return Inertia::render("Dungeon/Play", array_merge(
             $playerProperties,
             $inputProperties,
             $statsProperties,
             $miniMapProperties,
+            $inventoryProperties
         ));
     }
 
@@ -83,6 +128,9 @@ class DungeonController extends Controller
 
         $input = strtolower($validated["input"]);
 
+        // Teken de minimap
+        $this->defineMapDirection($input);
+
         if
         (
             $input === "left" ||
@@ -96,6 +144,12 @@ class DungeonController extends Controller
         else if (str_contains($input, "reset"))
         {
             return $this->reset();
+        }
+        if (str_starts_with($input, "use "))
+        {
+            $item = substr($input, 4);
+
+            return $this->inventoryService->use($item);
         }
         else
         {
@@ -163,10 +217,6 @@ class DungeonController extends Controller
             return redirect()->route("dungeon.play");
         }
 
-        // Logica voor de minimap om de driehoek te tekenen
-        // welke richting de speler naartoe kijkt
-        $this->defineMapDirection($input);
-
         $message = "You go through the door.";
         $messageID = $this->incrementMessageID();
 
@@ -182,6 +232,8 @@ class DungeonController extends Controller
 
     public function defineMapDirection(String $input)
     {
+        // Logica voor de minimap om de driehoek te tekenen
+        // welke richting de speler naartoe kijkt
         $currentDirection = session("direction");
         $directionHistory = session("direction_history", []);
 
@@ -219,6 +271,47 @@ class DungeonController extends Controller
             "direction" => $newDirection,
             "direction_history" => $directionHistory,
         ]);
+    }
+
+    public function getInventoryItems()
+    {
+        $player = $this->getPlayer();
+        $getInventoryID = Inventory::where("player_id", $player->player_id)->first();
+        $inventoryItems = InventoryItem::where("inventory_id", $getInventoryID->inventory_id)->get();
+
+        $allInventoryItems = [];
+        $classValues = [
+            "key" => Key::class,
+            "potion" => Potion::class,
+            "weapon" => Weapon::class,
+            "armor" => Armor::class,
+            "food" => Food::class,
+        ];
+
+        foreach ($inventoryItems as $item)
+        {
+            $itemID = $item->item_id;
+            $getItemType = Item::find($itemID);
+            $getItem = $classValues[$getItemType->type]::where("item_id", $itemID)->first();
+
+            if ($getItemType->type == "food" || $getItemType->type == "potion")
+            {
+                $itemQuantity = $item->quantity;
+            }
+            else
+            {
+                $itemQuantity = 0;
+            };
+
+            $allInventoryItems[] = [
+                "itemName" => $getItem->name,
+                "slot" => $item->slot,
+                "quantity" => $itemQuantity,
+                "icon_url" => $getItem->icon_url,
+            ];
+        };
+
+        return $allInventoryItems;
     }
 
     public function reset()

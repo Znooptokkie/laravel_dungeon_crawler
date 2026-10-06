@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('keys', function (Blueprint $table) {
             $table->id("key_id");
+            $table->string("name");
             $table->string("color");
-
+            $table->string("icon_url")->default("");
             $table->unsignedBigInteger("item_id")->unique();
             $table->foreign("item_id")->references("item_id")->on("items")->onDelete("cascade");
 

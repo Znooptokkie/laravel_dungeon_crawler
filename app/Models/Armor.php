@@ -12,12 +12,13 @@ class Armor extends Model
     protected $keyType = "int";
 
     protected $fillable = [
-        "armor_name",
+        "name",
         "armor_added",
         "armor_part",
         "health_added",
         "magic_added",
         "stamina_added",
+        "icon_url",
         "item_id"
     ];
 

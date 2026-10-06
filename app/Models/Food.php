@@ -12,10 +12,11 @@ class Food extends Model
     protected $keyType = "int";
 
     protected $fillable = [
-        "food_name",
+        "name",
         "health_added",
         "magic_added",
         "stamina_added",
+        "icon_url",
         "item_id"
     ];
 

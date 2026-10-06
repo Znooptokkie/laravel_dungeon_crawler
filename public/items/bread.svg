@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <g shape-rendering="crispEdges">
+    <!-- shadow -->
+    <path d="M10 49h6v4h34v-4h6v6H10z" fill="#17151a" opacity=".45"/>
+    <!-- bread outline -->
+    <path d="M10 29h4v-8h6v-6h8v-4h14v4h8v6h4v8h4v17h-4v5H14v-5h-4z" fill="#3a2922"/>
+    <!-- bread body -->
+    <path d="M14 30h4v-8h7v-5h14v4h8v9h7v15H14z" fill="#c98943"/>
+    <!-- toasted top -->
+    <path d="M18 22h7v-5h14v4h8v7H18z" fill="#e0a85c"/>
+    <path d="M22 17h17v4H25v4h-7v-3h4z" fill="#f0c477"/>
+    <!-- crust -->
+    <path d="M14 30h4v15h4v4h-8zM50 30h7v15h-4v4h-3zM25 17h14v4H25z" fill="#9b5d31"/>
+    <!-- cuts -->
+    <path d="M24 22h4v3h-4zM39 21h4v3h-4zM31 29h4v3h-4zM45 32h4v3h-4z" fill="#7b472b"/>
+    <path d="M25 21h3v2h-3zM40 20h3v2h-3zM32 28h3v2h-3z" fill="#f2c77d"/>
+    <!-- highlights -->
+    <path d="M18 32h3v7h-3zM22 40h3v5h-3z" fill="#dca15a"/>
+  </g>
+</svg>
