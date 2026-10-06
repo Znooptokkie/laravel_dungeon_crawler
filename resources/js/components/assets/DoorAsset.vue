@@ -20,11 +20,11 @@
         }
         else if (props.side === "left")
         {
-            doorPath = "M 0 365 L 0 100 L 150 0 L 150 250";
+            doorPath = "M 0 360 L 0 100 L 150 0 L 150 250";
         }
         else if (props.side === "right")
         {
-            doorPath = "M 150 250 L 150 0 L 300 100 L 300 365";
+            doorPath = "M 150 250 L 150 0 L 300 100 L 300 360";
         }
         else
         {
@@ -131,12 +131,16 @@
     {
         left: 17%;
         top: 26%;
+
+        transform: translateY(-1.5%);
     }
 
     .door-right
     {
         right: 17%;
         top: 26%;
+
+        transform: translateY(-1%);
     }
 
     .door-front
@@ -144,7 +148,7 @@
         left: 50%;
         top: 0;
 
-        transform: translateY(53%);
+        transform: translateY(51.5%);
     }
 
     .door-back

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Armor;
 use App\Models\DoorsRooms;
 use App\Models\DungeonLevel;
+use App\Models\EnemiesRoom;
+use App\Models\Enemy;
 use App\Models\Inventory;
 use App\Models\InventoryItem;
 use App\Models\Item;
@@ -74,31 +76,6 @@ class DungeonController extends Controller
             "direction" => session("direction"),
             "room" => $room,
         ];
-
-        // $getInventoryID = Inventory::where("player_id", $player->player_id)->first();
-        // $inventoryItems = InventoryItem::where("inventory_id", $getInventoryID->inventory_id)->get();
-
-        // $allInventoryItems = [];
-        // $classValues = [
-        //     "key" => Key::class,
-        //     "potion" => Potion::class,
-        //     "weapon" => Weapon::class,
-        //     "armor" => Armor::class,
-        //     "food" => Food::class,
-        // ];
-
-        // foreach ($inventoryItems as $item)
-        // {
-        //     $itemID = $item->item_id;
-        //     $getItemType = Item::find($itemID);
-        //     $getItem = $classValues[$getItemType->type]::where("item_id", $itemID)->first();
-
-        //     $allInventoryItems[] = [
-        //         "itemName" => $getItem->name,
-        //         "slot" => $item->slot,
-        //         "quantity" => $item->quantity
-        //     ];
-        // };
 
         $inventoryItems = $this->getInventoryItems();
 
@@ -217,7 +194,9 @@ class DungeonController extends Controller
             return redirect()->route("dungeon.play");
         }
 
-        $message = "You go through the door.";
+        // Geeft aan wat er allemaal in de kamer zit
+        $message = $this->theMessages($nextRoom);
+
         $messageID = $this->incrementMessageID();
 
         session([
@@ -228,6 +207,41 @@ class DungeonController extends Controller
         ]);
 
         return redirect()->route("dungeon.play");
+    }
+
+    public function theMessages(Room $nextRoom)
+    {
+        $availableDoors = $nextRoom->doors()->wherePivot("door_side", "!=",  "back")->get();
+        $enemyIDs = EnemiesRoom::where("room_id", $nextRoom->room_id)->pluck("enemy_id");
+        $availableEnemies = Enemy::whereIn("enemy_id", $enemyIDs)->get();
+        // dd($availableEnemies);
+
+        $message = "You go through the door. ";
+
+        if ($availableDoors->isNotEmpty())
+        {
+            // $message = "Available doors: ";
+
+            foreach ($availableDoors as $door)
+            {
+                $message .= "Available doors: " . $door->pivot->door_side . ", ";
+            }
+        }
+
+        if ($availableEnemies->isNotEmpty())
+        {
+            foreach ($availableEnemies as $enemy)
+            {
+                $message .= "There is an enemy: " . $enemy->enemy_name;
+            }
+        }
+
+        if ($availableDoors->isEmpty() && $availableEnemies->isEmpty())
+        {
+            $message = "You go through the door. There is nothing interesting in this room.";
+        }
+
+        return $message;
     }
 
     public function defineMapDirection(String $input)
@@ -341,16 +355,21 @@ class DungeonController extends Controller
         return Player::find(session("player_id"));
     }
 
+    public function getRoomInfo()
+    {
+        return DoorsRooms::select([
+            "door_id",
+            "room_id",
+            "door_side"
+        ])->get();
+    }
+
     public function defineRoomsForMap()
     {
         $player = $this->getPlayer();
         $dungeonLevel = $player->at_dungeon_level;
 
-        $getRoomInfo = DoorsRooms::select([
-            "door_id",
-            "room_id",
-            "door_side"
-        ])->get();
+        $getRoomInfo = $this->getRoomInfo();
 
         return $getRoomInfo;
     }

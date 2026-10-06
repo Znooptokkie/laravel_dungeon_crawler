@@ -12,6 +12,8 @@ class Enemy extends Model
     protected $keyType = "int";
 
     protected $fillable = [
+        "enemy_name",
+        "combat_level",
         "hitpoints",
         "armor",
         "attack",

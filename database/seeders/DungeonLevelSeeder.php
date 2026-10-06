@@ -160,6 +160,9 @@ class DungeonLevelSeeder extends Seeder
             "door_side" => "back"
         ]);
 
+        $enemySeeder = new EnemySeeder();
+        $enemySeeder->createGoblin($fifthRoom);
+
         // Room 5 > Room 6
         DoorsRooms::create([
             "door_id" => $fifthDoor->door_id,

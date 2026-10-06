@@ -13,13 +13,15 @@ return new class extends Migration
     {
         Schema::create('enemies', function (Blueprint $table) {
             $table->id("enemy_id");
+            $table->string("enemy_name");
+            $table->string("combat_level")->default(1);
             $table->integer("hitpoints")->default(10);
             $table->integer("armor")->default(1);
             $table->integer("attack")->default(1);
             $table->boolean("is_boss")->default(false);
             $table->boolean("is_aggressive")->default(false);
 
-            $table->unsignedBigInteger("enemy_special_attack_id");
+            $table->unsignedBigInteger("enemy_special_attack_id")->nullable();
             $table->foreign("enemy_special_attack_id")->references("enemy_special_attack_id")->on("enemy_special_attacks")->onDelete("cascade");
 
             $table->timestamps();

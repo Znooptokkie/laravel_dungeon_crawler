@@ -7,27 +7,24 @@
         playerName: String,
     })
 
-    const outputStringsArray = ref([])
-    outputStringsArray.value.push(props.message)
+    const outputStringsArray = ref([]);
 
-    // Watch the messageID
-    // Because messageID is unique, there will always be an update
-    // So there will always be a new message shown
+    outputStringsArray.value.push(props.message);
+
     watch(
         () => props.messageID,
         () => {
-            if (outputStringsArray.value.length === 10)
+            while (outputStringsArray.value.length >= 10)
                 outputStringsArray.value.shift()
 
             outputStringsArray.value.push(props.message)
         }
     )
-
 </script>
 
 <template>
     <div class="chat-output-panel">
-        <p v-for="message in outputStringsArray" :key="message">
+        <p v-for="(message, index) in outputStringsArray" :key="index">
             <span v-if="message.includes(playerName)">
                 {{ message.split(playerName)[0] }}<strong>{{ playerName }}</strong>{{ message.split(playerName)[1] }}
             </span>
