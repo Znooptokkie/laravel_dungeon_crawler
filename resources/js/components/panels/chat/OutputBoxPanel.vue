@@ -2,22 +2,22 @@
     import { ref, watch } from "vue";
 
     const props = defineProps({
-        message: String,
+        messages: Array,
         messageID: Number,
-        playerName: String,
     })
 
-    const outputStringsArray = ref([]);
-
-    outputStringsArray.value.push(props.message);
+    const outputStringsArray = ref([...props.messages]);
 
     watch(
         () => props.messageID,
         () => {
-            while (outputStringsArray.value.length >= 10)
-                outputStringsArray.value.shift()
+            for (const message of props.messages)
+            {
+                while (outputStringsArray.value.length >= 10)
+                    outputStringsArray.value.shift()
 
-            outputStringsArray.value.push(props.message)
+                outputStringsArray.value.push(message)
+            }
         }
     )
 </script>
@@ -25,12 +25,15 @@
 <template>
     <div class="chat-output-panel">
         <p v-for="(message, index) in outputStringsArray" :key="index">
-            <span v-if="message.includes(playerName)">
-                {{ message.split(playerName)[0] }}<strong>{{ playerName }}</strong>{{ message.split(playerName)[1] }}
-            </span>
-
-            <span v-else>
-                {{ message }}
+            <span
+                v-for="(part, partIndex) in message"
+                :key="partIndex"
+                :style="{
+                    color: part.color,
+                    fontWeight: part.bold ? 'bold' : 'normal'
+                }"
+            >
+                {{ part.text }}
             </span>
         </p>
     </div>

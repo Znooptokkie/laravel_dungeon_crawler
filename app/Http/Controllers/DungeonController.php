@@ -56,7 +56,7 @@ class DungeonController extends Controller
 
         $inputProperties = [
             "lastInput" => session("last_input", ""),
-            "message" => session("message", ""),
+            "messages"  => session("messages", []),
             "messageID" => session("message_id", 0)
         ];
 
@@ -130,11 +130,21 @@ class DungeonController extends Controller
         }
         else
         {
-            $message = 'Invalid command! Try "help".';
+            $messages = [];
+            $messages[] = [
+                [
+                    "text" => 'Invalid command! Try '
+                ],
+                [
+                    "text" => "help",
+                    "color" => "#7f9db5",
+                    "bold" => true
+                ]
+            ];
             $messageID = $this->incrementMessageID();
 
             session([
-                "message" => $message,
+                "messages" => $messages,
                 "message_id" => $messageID
             ]);
         }
@@ -153,11 +163,14 @@ class DungeonController extends Controller
 
         if ($door === null)
         {
-            $message = "There is no door on that side.";
+            $messages = [];
+            $messages[] = [
+                "text" => "There is no door on that side"
+            ];
             $messageID = $this->incrementMessageID();
 
             session([
-                "message" => $message,
+                "messages" => $messages,
                 "message_id" => $messageID
             ]);
 
@@ -166,11 +179,14 @@ class DungeonController extends Controller
 
         if ($door->is_locked)
         {
-            $message = "The door is locked.";
+            $messages = [];
+            $messages[] = [
+                "text" => "The door is locked"
+            ];
             $messageID = $this->incrementMessageID();
 
             session([
-                "message" => $message,
+                "messages" => $messages,
                 "message_id" => $messageID
             ]);
 
@@ -183,11 +199,14 @@ class DungeonController extends Controller
 
         if ($nextRoom === null)
         {
-            $message = "This door does not lead anywhere.";
+            $messages = [];
+            $messages[] = [
+                "text" => "This door does not lead anywhere"
+            ];
             $messageID = $this->incrementMessageID();
 
             session([
-                "message" => $message,
+                "messages" => $messages,
                 "message_id" => $messageID
             ]);
 
@@ -195,14 +214,14 @@ class DungeonController extends Controller
         }
 
         // Geeft aan wat er allemaal in de kamer zit
-        $message = $this->theMessages($nextRoom);
+        $messages = $this->theMessages($nextRoom);
 
         $messageID = $this->incrementMessageID();
 
         session([
             "room" => $nextRoom->room_id,
             "last_input" => $input,
-            "message" => $message,
+            "messages" => $messages,
             "message_id" => $messageID,
         ]);
 
@@ -214,34 +233,70 @@ class DungeonController extends Controller
         $availableDoors = $nextRoom->doors()->wherePivot("door_side", "!=",  "back")->get();
         $enemyIDs = EnemiesRoom::where("room_id", $nextRoom->room_id)->pluck("enemy_id");
         $availableEnemies = Enemy::whereIn("enemy_id", $enemyIDs)->get();
-        // dd($availableEnemies);
 
-        $message = "You go through the door. ";
+        $messages = [];
+        $messages[] = [
+            "text" => "You go through the door"
+        ];
 
         if ($availableDoors->isNotEmpty())
         {
-            // $message = "Available doors: ";
+            $message = [
+                [
+                    "text" => "There is a door to the "
+                ]
+            ];
+
+            $counter = 0;
 
             foreach ($availableDoors as $door)
             {
-                $message .= "Available doors: " . $door->pivot->door_side . ", ";
+                if ($counter > 0)
+                {
+                    $message[] = [
+                        "text" => " and "
+                    ];
+                }
+
+                $message[] = [
+                    "text" => $door->pivot->door_side,
+                    "bold" => true,
+                    "color" => "#b08a5b"
+                ];
+
+                $counter++;
             }
+
+            $messages[] = $message;
         }
 
         if ($availableEnemies->isNotEmpty())
         {
             foreach ($availableEnemies as $enemy)
             {
-                $message .= "There is an enemy: " . $enemy->enemy_name;
+                $messages[] = [
+                    [
+                        "text" => "Watch out! There is an enemy called: "
+                    ],
+                    [
+                        "text" => $enemy->enemy_name,
+                        "color" => "#c45b5b",
+                        "bold" => true
+                    ]
+                ];
             }
         }
 
         if ($availableDoors->isEmpty() && $availableEnemies->isEmpty())
         {
-            $message = "You go through the door. There is nothing interesting in this room.";
+            $messages[] = [
+                [
+                    "text" => "There is nothing interesting in this room"
+                ]
+            ];
         }
 
-        return $message;
+        return $messages;
     }
 
     public function defineMapDirection(String $input)
@@ -330,20 +385,22 @@ class DungeonController extends Controller
 
     public function reset()
     {
-        $message = "You reset the game. Let's hope it was the correct decision!";
+        $messages = [];
+        $messages[] = [
+            "text" => "You reset the game. Let's hope it was the correct decision!"
+        ];
         $messageID = $this->incrementMessageID();
 
         session()->forget([
             "room",
             "last_input",
-            "message",
-            "message_id",
+            "messages",
             "direction",
             "direction_history"
         ]);
 
         session([
-            "message" => $message,
+            "messages" => $messages,
             "message_id" => $messageID
         ]);
 

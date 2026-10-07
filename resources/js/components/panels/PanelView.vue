@@ -8,7 +8,7 @@
     import StatsPanel from './stats/StatsPanel.vue';
 
     const props = defineProps({
-        message: String,
+        messages: Array,
         messageID: Number,
         playerName: String,
         combatLevel: Number,
@@ -29,7 +29,7 @@
 <template>
     <div class="chat-panel">
         <OutputBoxPanel
-            :message="props.message"
+            :messages="props.messages"
             :messageID="props.messageID"
             :player-name="playerName"
         />

@@ -7,7 +7,7 @@
         dungeonLevel: Number,
         doors: Array,
         lastInput: String,
-        message: String,
+        messages: Array,
         messageID: Number,
         hasChest: Boolean,
         chestOpened: Boolean,
@@ -40,7 +40,7 @@
 
         <div class="control-panel">
             <PanelView
-                :message="props.message"
+                :messages="props.messages"
                 :messageID="props.messageID"
                 :player-name="props.playerName"
                 :combat-level="props.combatLevel"
