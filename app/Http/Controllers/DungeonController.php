@@ -7,6 +7,7 @@ use App\Models\DoorsRooms;
 use App\Models\DungeonLevel;
 use App\Models\EnemiesRoom;
 use App\Models\Enemy;
+use App\Models\EnemySpecialAttacks;
 use App\Models\Inventory;
 use App\Models\InventoryItem;
 use App\Models\Item;
@@ -83,12 +84,19 @@ class DungeonController extends Controller
             "inventoryItems" => $inventoryItems,
         ];
 
+        $allEnemyStats = $this->getEnemyStats($room);
+
+        $enemyProperties = [
+            "enemyDetails" => $allEnemyStats,
+        ];
+
         return Inertia::render("Dungeon/Play", array_merge(
             $playerProperties,
             $inputProperties,
             $statsProperties,
             $miniMapProperties,
-            $inventoryProperties
+            $inventoryProperties,
+            $enemyProperties
         ));
     }
 
@@ -228,6 +236,31 @@ class DungeonController extends Controller
         return redirect()->route("dungeon.play");
     }
 
+    public function getEnemyStats(Room $room)
+    {
+        $allEnemyStats = [];
+        $enemyInRoom = EnemiesRoom::where("room_id", $room->room_id)->get();
+
+        if ($enemyInRoom->isNotEmpty())
+        {
+            foreach ($enemyInRoom as $enemy)
+            {
+                $enemyID = $enemy->enemy_id;
+                $enemyStats = Enemy::find($enemyID);
+
+                $allEnemyStats[] = $enemyStats;
+
+                if ($enemy->enemy_special_attack_id != null)
+                {
+                    $enemySpecial = EnemySpecialAttacks::find($enemy->enemy_special_attack_id);
+                    $allEnemyStats[] = $enemySpecial;
+                }
+            }
+        };
+
+        return $allEnemyStats;
+    }
+
     public function theMessages(Room $nextRoom)
     {
         $availableDoors = $nextRoom->doors()->wherePivot("door_side", "!=",  "back")->get();
@@ -274,14 +307,27 @@ class DungeonController extends Controller
         {
             foreach ($availableEnemies as $enemy)
             {
+                $aggressive = "";
+                if ($enemy->is_aggressive)
+                {
+                    $aggressive = "It's aggressive";
+                }
+                else
+                {
+                    $aggressive = "Luckily it's unaggressive";
+                }
+
                 $messages[] = [
                     [
                         "text" => "Watch out! There is an enemy called: "
                     ],
                     [
-                        "text" => $enemy->enemy_name,
+                        "text" => $enemy->enemy_name . " lvl " . $enemy->combat_level,
                         "color" => "#c45b5b",
                         "bold" => true
+                    ],
+                    [
+                        "text" => ". " . $aggressive
                     ]
                 ];
             }
@@ -387,7 +433,9 @@ class DungeonController extends Controller
     {
         $messages = [];
         $messages[] = [
-            "text" => "You reset the game. Let's hope it was the correct decision!"
+            [
+                "text" => "You reset the game. Let's hope it was the correct decision!"
+            ]
         ];
         $messageID = $this->incrementMessageID();
 

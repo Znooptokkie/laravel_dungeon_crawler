@@ -19,7 +19,8 @@ class Enemy extends Model
         "attack",
         "is_boss",
         "is_aggressive",
-        "enemy_special_attack"
+        "icon_url",
+        "enemy_special_attack",
     ];
 
     public function EnemySpecialAttack()

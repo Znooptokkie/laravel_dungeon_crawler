@@ -1,12 +1,13 @@
 <script setup>
     import DoorAsset from '../assets/DoorAsset.vue';
+    import EnemyEntity from "../entities/EnemyEntity.vue";
 
     defineProps({
         dungeonLevel: Number,
         doors: Array,
         hasChest: Boolean,
         chestOpened: Boolean,
-        boss: { type: Object, default: null },
+        enemyDetails: Array,
     });
 </script>
 
@@ -30,7 +31,15 @@
                 stroke-width=3
             />
         </svg>
-        <!-- <BossEntity v-if="boss" :name="boss.name" :hp="boss.hp" :max-hp="boss.maxHp" /> -->
+
+        <div class="enemies">
+            <EnemyEntity
+                v-for="enemy in enemyDetails"
+                :enemy-name="enemy.enemy_name"
+                :enemy-level="enemy.combat_level"
+                :enemy-icon="enemy.icon_url"
+            />
+        </div>
 
         <div class="doors">
             <DoorAsset
@@ -40,15 +49,16 @@
                 :locked="door.is_locked"
             />
         </div>
-
-            <!-- <ChestAsset v-if="hasChest" :opened="chestOpened" /> -->
-
-        <!-- <p class="message">{{ message }}</p> -->
     </div>
 </template>
 
 <style scoped lang="scss">
     @import '../../../css/_variables';
+
+    h1
+    {
+        color: $color-text-muted;
+    }
 
     .room
     {
@@ -57,7 +67,6 @@
         width: 100%;
         background: $color-bg-dark;
         border: 2px solid $color-stone-light;
-        // border-radius: 6px;
         text-align: center;
     }
 

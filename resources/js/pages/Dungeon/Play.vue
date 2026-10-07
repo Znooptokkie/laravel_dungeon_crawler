@@ -23,6 +23,7 @@
         direction: Number,
         room: Object,
         inventoryItems: Object,
+        enemyDetails: Array,
     });
 
 </script>
@@ -35,6 +36,7 @@
                 :doors="doors"
                 :has-chest="hasChest"
                 :chest-opened="chestOpened"
+                :enemy-details="enemyDetails"
             />
         </div>
 

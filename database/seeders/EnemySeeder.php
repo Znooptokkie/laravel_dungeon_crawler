@@ -29,6 +29,7 @@ class EnemySeeder extends Seeder
             "attack"                    => 1,
             "is_boss"                   => false,
             "is_aggressive"             => false,
+            "icon_url"                  => "/items/goblin.svg",
             "enemy_special_attack_id"   => null
         ]);
 
