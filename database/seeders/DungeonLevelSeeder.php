@@ -162,6 +162,7 @@ class DungeonLevelSeeder extends Seeder
 
         $enemySeeder = new EnemySeeder();
         $enemySeeder->createGoblin($fifthRoom);
+        $enemySeeder->createGoblin($fourthRoom);
 
         // Room 5 > Room 6
         DoorsRooms::create([

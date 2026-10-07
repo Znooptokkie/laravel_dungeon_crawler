@@ -24,6 +24,7 @@
         room: Object,
         inventoryItems: Object,
         enemyDetails: Array,
+        enemyRoom: Array,
     });
 
 </script>
@@ -57,6 +58,7 @@
                 :direction="props.direction"
                 :room="props.room"
                 :inventory-items="props.inventoryItems"
+                :enemy-room="props.enemyRoom"
             />
         </div>
 

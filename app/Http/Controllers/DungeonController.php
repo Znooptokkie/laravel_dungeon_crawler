@@ -72,10 +72,13 @@ class DungeonController extends Controller
             "pointsLeft" => $player->points_left
         ];
 
+        $enemyInRoom = EnemiesRoom::select(["room_id", "enemy_id"])->get();
+
         $miniMapProperties = [
             "roomInfo" => $this->defineRoomsForMap(),
             "direction" => session("direction"),
             "room" => $room,
+            "enemyRoom" => $enemyInRoom
         ];
 
         $inventoryItems = $this->getInventoryItems();
@@ -173,7 +176,9 @@ class DungeonController extends Controller
         {
             $messages = [];
             $messages[] = [
-                "text" => "There is no door on that side"
+                [
+                    "text" => "There is no door on that side"
+                ]
             ];
             $messageID = $this->incrementMessageID();
 

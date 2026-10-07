@@ -23,6 +23,8 @@
         direction: Number,
         room: Object,
         inventoryItems: Object,
+        enemyDetails: Array,
+        enemyRoom: Array,
     })
 </script>
 
@@ -59,6 +61,7 @@
             :room-info="props.roomInfo"
             :direction="props.direction"
             :room="props.room"
+            :enemy-room="props.enemyRoom"
         />
     </div>
     <div class="inventory-panel">

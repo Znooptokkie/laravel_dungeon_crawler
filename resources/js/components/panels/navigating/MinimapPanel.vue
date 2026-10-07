@@ -4,7 +4,8 @@
     const props = defineProps({
         roomInfo: Array,
         direction: Number,
-        room: Object
+        room: Object,
+        enemyRoom: Array
     })
 
     // Positie veranderd afhankelijk van de direction de speler loopt
@@ -237,10 +238,50 @@
             )
         }
 
-        path.setAttribute("fill", "red")
+        path.setAttribute("fill", "yellow")
         path.setAttribute("stroke", "none")
 
         svg.appendChild(path)
+    }
+    console.log(props.enemyDetails)
+    function drawEnemy()
+    {
+        const svgNS = "http://www.w3.org/2000/svg"
+        const svg = document.getElementById("minimap-svg")
+
+        for (const enemy of props.enemyRoom)
+        {
+            const enemyRoom = roomPositions[enemy.room_id]
+
+            if (!enemyRoom)
+                continue
+
+            const path = document.createElementNS(svgNS, "path")
+
+            const x = enemyRoom.x
+            const y = enemyRoom.y
+
+            path.setAttribute(
+                "d",
+                `M ${640 + x} ${1108 + y}
+                 L ${644 + x} ${1119 + y}
+                 L ${656 + x} ${1119 + y}
+                 L ${646 + x} ${1126 + y}
+                 L ${650 + x} ${1138 + y}
+                 L ${640 + x} ${1131 + y}
+                 L ${630 + x} ${1138 + y}
+                 L ${634 + x} ${1126 + y}
+                 L ${624 + x} ${1119 + y}
+                 L ${636 + x} ${1119 + y}
+                 Z`
+            )
+
+            path.setAttribute("fill", "red")
+            path.setAttribute("stroke", "none")
+            path.setAttribute("class", "enemy-marker")
+
+            svg.appendChild(path)
+        }
     }
 
     function drawLegenda()
@@ -259,7 +300,7 @@
              Z`
         )
 
-        path.setAttribute("fill", "red")
+        path.setAttribute("fill", "yellow")
         path.setAttribute("stroke", "none")
 
         svg.appendChild(path)
@@ -276,10 +317,46 @@
         text.textContent = "Player"
 
         svg.appendChild(text)
+
+        const enemyPath = document.createElementNS(svgNS, "path")
+
+        enemyPath.setAttribute(
+            "d",
+            `M -20 115
+             L -12 137
+             L 12 137
+             L -8 151
+             L 0 174
+             L -20 160
+             L -40 174
+             L -32 151
+             L -52 137
+             L -28 137
+             Z`
+        )
+
+        enemyPath.setAttribute("fill", "red")
+        enemyPath.setAttribute("stroke", "none")
+
+        svg.appendChild(enemyPath)
+
+        const enemyText = document.createElementNS(svgNS, "text")
+
+        enemyText.setAttribute("x", "50")
+        enemyText.setAttribute("y", "175")
+        enemyText.setAttribute("fill", "#948d7f")
+        enemyText.setAttribute("font-size", "66")
+        enemyText.setAttribute("font-family", "sans-serif")
+        enemyText.setAttribute("font-weight", "bold")
+
+        enemyText.textContent = "Enemy"
+
+        svg.appendChild(enemyText)
     }
 
     onMounted(() => {
         createRooms()
+        drawEnemy()
         playerLocation(props.direction, null)
         drawLegenda()
     })
