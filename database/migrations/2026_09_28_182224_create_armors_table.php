@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('armors', function (Blueprint $table) {
             $table->id("armor_id");
             $table->string("name");
+            $table->enum("rarity", ["common", "rare", "epic", "legendary"]);
             $table->integer("armor_added")->default(0);
             $table->string("armor_part")->default("body");
             $table->integer("health_added")->default(0);

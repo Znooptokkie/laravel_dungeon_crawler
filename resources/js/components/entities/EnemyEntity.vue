@@ -14,7 +14,7 @@
         }
     });
 
-    console.log(props.enemyIcon)
+    // console.log(props.enemyIcon)
 </script>
 
 <template>

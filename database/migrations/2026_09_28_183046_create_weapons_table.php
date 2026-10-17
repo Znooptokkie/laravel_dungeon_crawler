@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('weapons', function (Blueprint $table) {
             $table->id("weapon_id");
             $table->string("name");
+            $table->enum("rarity", ["common", "rare", "epic", "legendary"]);
             $table->string("damage");
             $table->integer("health_added");
             $table->integer("magic_added");

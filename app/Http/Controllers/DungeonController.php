@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Armor;
+use App\Models\Chest;
+use App\Models\ChestItem;
 use App\Models\DoorsRooms;
 use App\Models\DungeonLevel;
 use App\Models\EnemiesRoom;
@@ -21,12 +23,19 @@ use App\Models\Room;
 use App\Models\RoomsDungeonLevel;
 use App\Models\Weapon;
 use App\Models\Food;
+
 use App\Services\InventoryService;
+use App\Services\GearLootService;
+use App\Services\ChestService;
+use App\Services\MessageService;
+use App\Support\ItemType;
 
 class DungeonController extends Controller
 {
     public function __construct(
-        private InventoryService $inventoryService
+        private InventoryService $inventoryService,
+        private ChestService $chestService,
+        private MessageService $messageService
     ) {}
 
     public function index()
@@ -78,7 +87,8 @@ class DungeonController extends Controller
             "roomInfo" => $this->defineRoomsForMap(),
             "direction" => session("direction"),
             "room" => $room,
-            "enemyRoom" => $enemyInRoom
+            "enemyRoom" => $enemyInRoom,
+                "chestRooms" => Room::whereNotNull("chest_id")->get(["room_id", "chest_id"]),
         ];
 
         $inventoryItems = $this->getInventoryItems();
@@ -93,13 +103,38 @@ class DungeonController extends Controller
             "enemyDetails" => $allEnemyStats,
         ];
 
+
+        $chest = $this->chestService->getChest();
+        $chestItems = $this->chestService->getChestItems();
+
+        $chestProperties = [
+            "chestRoom" => null,
+            "showChestPopup" => session("showChestPopup", false),
+        ];
+
+        if ($chest !== null)
+        {
+            $chestIsOpen = Chest::where("chest_id", $chest->chest_id)->pluck("is_open")->first();
+
+            $chestIsEmpty = Chest::where("chest_id", $chest->chest_id)->pluck("is_empty")->first();
+
+            $chestProperties["chestRoom"] = [
+                "room_id"      => $chest->room_id,
+                "chest_id"     => $chest->chest_id,
+                "chestItems"   => $chestItems,
+                "chestIsOpen"  => $chestIsOpen,
+                "chestIsEmpty" => $chestIsEmpty,
+            ];
+        }
+
         return Inertia::render("Dungeon/Play", array_merge(
             $playerProperties,
             $inputProperties,
             $statsProperties,
             $miniMapProperties,
             $inventoryProperties,
-            $enemyProperties
+            $enemyProperties,
+            $chestProperties
         ));
     }
 
@@ -129,38 +164,52 @@ class DungeonController extends Controller
         {
             return $this->move($input);
         }
-        else if (str_contains($input, "reset"))
+        if (str_contains($input, "reset"))
         {
             return $this->reset();
         }
-        if (str_starts_with($input, "use "))
+        if (str_starts_with($input, "use"))
         {
             $item = substr($input, 4);
 
             return $this->inventoryService->use($item);
         }
+        if (str_starts_with($input, "open chest"))
+        {
+            return $this->chestService->checkIfChest();
+        }
+        if ($input === "close chest")
+        {
+            return $this->chestService->closeChest();
+        }
+        if (str_starts_with($input, "take"))
+        {
+            $item = substr($input, 5);
+            return $this->chestService->takeItem($item);
+        }
         else
         {
-            $messages = [];
-            $messages[] = [
+            $this->messageService->createMessage([
                 [
-                    "text" => 'Invalid command! Try '
+                    "text" => "Invalid command! Try "
                 ],
                 [
                     "text" => "help",
                     "color" => "#7f9db5",
                     "bold" => true
                 ]
-            ];
-            $messageID = $this->incrementMessageID();
-
-            session([
-                "messages" => $messages,
-                "message_id" => $messageID
             ]);
         }
 
         return redirect()->route("dungeon.play");
+    }
+
+    public function openChest()
+    {
+        $currentRoom = session("room");
+        $chestID = Room::where("room_id", $currentRoom)->pluck("chest_id")->first();
+        $chest = Chest::find($chestID)->first();
+        dd($chest);
     }
 
     public function move(String $input)
@@ -168,9 +217,7 @@ class DungeonController extends Controller
         $currentRoomId = session("room");
         $currentRoom = Room::find($currentRoomId);
 
-        $door = $currentRoom->doors()
-            ->wherePivot("door_side", $input)
-            ->first();
+        $door = $currentRoom->doors()->wherePivot("door_side", $input)->first();
 
         if ($door === null)
         {
@@ -206,9 +253,7 @@ class DungeonController extends Controller
             return redirect()->route("dungeon.play");
         }
 
-        $nextRoom = $door->rooms()
-            ->where("rooms.room_id", "!=", $currentRoomId)
-            ->first();
+        $nextRoom = $door->rooms()->where("rooms.room_id", "!=", $currentRoomId)->first();
 
         if ($nextRoom === null)
         {
@@ -269,8 +314,11 @@ class DungeonController extends Controller
     public function theMessages(Room $nextRoom)
     {
         $availableDoors = $nextRoom->doors()->wherePivot("door_side", "!=",  "back")->get();
+
         $enemyIDs = EnemiesRoom::where("room_id", $nextRoom->room_id)->pluck("enemy_id");
         $availableEnemies = Enemy::whereIn("enemy_id", $enemyIDs)->get();
+
+        $availableChests = Room::where("room_id", $nextRoom->room_id)->pluck("chest_id")->first();
 
         $messages = [];
         $messages[] = [
@@ -297,9 +345,9 @@ class DungeonController extends Controller
                 }
 
                 $message[] = [
-                    "text" => $door->pivot->door_side,
-                    "bold" => true,
-                    "color" => "#b08a5b"
+                    "text"  => $door->pivot->door_side,
+                    "bold"  => true,
+                    "color" => "#5bb0a5"
                 ];
 
                 $counter++;
@@ -343,6 +391,37 @@ class DungeonController extends Controller
             $messages[] = [
                 [
                     "text" => "There is nothing interesting in this room"
+                ]
+            ];
+        }
+
+        $chest = Chest::find($availableChests);
+
+        if (
+            $availableChests != null &&
+            $chest != null &&
+            !$chest->is_empty &&
+            !$chest->is_open
+        )
+        {
+            $lockpickingReq = $chest->lockpicking_level_req;
+
+            $messages[] = [
+                [
+                    "text" => "WOW! Look at that! There is a "
+                ],
+                [
+                    "text"  => "chest",
+                    "color" => "#c49a52",
+                    "bold"  => true
+                ],
+                [
+                    "text"  => ". It requires "
+                ],
+                [
+                    "text"  => "Lockpicking lvl " . $lockpickingReq,
+                    "color" => "#c49a52",
+                    "bold"  => true
                 ]
             ];
         }
@@ -400,19 +479,12 @@ class DungeonController extends Controller
         $inventoryItems = InventoryItem::where("inventory_id", $getInventoryID->inventory_id)->get();
 
         $allInventoryItems = [];
-        $classValues = [
-            "key" => Key::class,
-            "potion" => Potion::class,
-            "weapon" => Weapon::class,
-            "armor" => Armor::class,
-            "food" => Food::class,
-        ];
 
         foreach ($inventoryItems as $item)
         {
             $itemID = $item->item_id;
             $getItemType = Item::find($itemID);
-            $getItem = $classValues[$getItemType->type]::where("item_id", $itemID)->first();
+            $getItem = ItemType::MODELS[$getItemType->type]::where("item_id", $itemID)->first();
 
             if ($getItemType->type == "food" || $getItemType->type == "potion")
             {
@@ -476,9 +548,6 @@ class DungeonController extends Controller
 
     public function defineRoomsForMap()
     {
-        $player = $this->getPlayer();
-        $dungeonLevel = $player->at_dungeon_level;
-
         $getRoomInfo = $this->getRoomInfo();
 
         return $getRoomInfo;

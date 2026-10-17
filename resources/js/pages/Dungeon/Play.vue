@@ -9,8 +9,6 @@
         lastInput: String,
         messages: Array,
         messageID: Number,
-        hasChest: Boolean,
-        chestOpened: Boolean,
         combatLevel: Number,
         hitpoints: Number,
         magic: Number,
@@ -25,6 +23,9 @@
         inventoryItems: Object,
         enemyDetails: Array,
         enemyRoom: Array,
+        chestRoom: Object,
+        showChestPopup: Boolean,
+        chestRooms: Array
     });
 
 </script>
@@ -38,6 +39,10 @@
                 :has-chest="hasChest"
                 :chest-opened="chestOpened"
                 :enemy-details="enemyDetails"
+                :chest-room="chestRoom"
+                :room="room"
+                :show-chest-popup="showChestPopup"
+                :chest-items="chestRoom?.chestItems ?? []"
             />
         </div>
 
@@ -59,6 +64,8 @@
                 :room="props.room"
                 :inventory-items="props.inventoryItems"
                 :enemy-room="props.enemyRoom"
+                :chest-room="props.chestRoom"
+                :chest-rooms="props.chestRooms"
             />
         </div>
 

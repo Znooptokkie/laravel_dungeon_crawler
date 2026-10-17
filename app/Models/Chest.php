@@ -10,6 +10,8 @@ class Chest extends Model
     protected $keyType = "int";
 
     protected $fillable = [
-        "lockpicking_level_req"
+        "lockpicking_level_req",
+        "is_open",
+        "is_empty"
     ];
 }

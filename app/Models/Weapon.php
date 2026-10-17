@@ -13,6 +13,7 @@ class Weapon extends Model
 
     protected $fillable = [
         "name",
+        "rarity",
         "damage",
         "health_added",
         "magic_added",

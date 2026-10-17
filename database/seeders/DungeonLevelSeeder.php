@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Chest;
 use App\Models\Door;
 use App\Models\DoorsRooms;
 use App\Models\DungeonLevel;
@@ -34,8 +35,12 @@ class DungeonLevelSeeder extends Seeder
             "dungeon_level_id" => $levelId
         ]);
 
+        // $chest = new ChestSeeder();
+        // $chest->chest();
+        $first_chest = Chest::where("chest_id", 1)->first();
+
         $secondRoom = Room::create([
-            "chest_id" => null
+            "chest_id" => $first_chest->chest_id
         ]);
 
         RoomsDungeonLevel::create([
@@ -43,8 +48,10 @@ class DungeonLevelSeeder extends Seeder
             "dungeon_level_id" => $levelId
         ]);
 
+        $second_chest = Chest::where("chest_id", 2)->first();
+
         $thirdRoom = Room::create([
-            "chest_id" => null
+            "chest_id" => $second_chest->chest_id
         ]);
 
         RoomsDungeonLevel::create([

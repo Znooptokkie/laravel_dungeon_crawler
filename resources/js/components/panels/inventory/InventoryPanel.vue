@@ -1,36 +1,57 @@
 <script setup>
+    import { computed } from "vue"
+
     const props = defineProps({
-        inventoryItems: Object
+        inventoryItems: {
+            type: Array,
+            default: () => []
+        }
     })
 
-    const inventoryItemsArray = []
-    for (let i = 0; i < 12; i++)
-    {
-        const slot = i + 1;
-        const inventoryItem = props.inventoryItems.find(item => item.slot === slot);
+    const inventoryItemsArray = computed(() => {
+        const items = []
 
-        if (inventoryItem)
-            inventoryItemsArray.push(inventoryItem);
-        else
-            inventoryItemsArray.push("null");
-    }
-    // console.log(props.inventoryItems[0].icon_url)
+        for (let i = 0; i < 12; i++) {
+            const slot = i + 1
+
+            const inventoryItem = props.inventoryItems.find(
+                item => item.slot === slot
+            )
+
+            if (inventoryItem) {
+                items.push(inventoryItem)
+            } else {
+                items.push(null)
+            }
+        }
+
+        return items
+    })
 </script>
 
 <template>
-    <div v-for="(item, index) in inventoryItemsArray" :key="index" class="inventory-slot">
-        <p v-if="item.quantity > 0" class="item-quantity">{{ item.quantity }}</p>
-        <img v-if="item" :src="item.icon_url" class="item-icon">
+    <div
+        v-for="(item, index) in inventoryItemsArray"
+        :key="index"
+        class="inventory-slot"
+    >
+        <p
+            v-if="item && item.quantity > 0"
+            class="item-quantity"
+        >
+            {{ item.quantity }}
+        </p>
+
+        <img
+            v-if="item"
+            :src="item.icon_url"
+            class="item-icon"
+        >
     </div>
 </template>
 
 <style scoped lang="scss">
     @import "../../../../css/variables";
-
-    .inventory {
-        // display: grid;
-        // grid-template-columns: repeat(5, 1fr);
-    }
 
     .inventory-slot
     {

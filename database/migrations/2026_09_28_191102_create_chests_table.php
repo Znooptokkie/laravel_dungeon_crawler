@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('chests', function (Blueprint $table) {
             $table->id("chest_id");
             $table->integer("lockpicking_level_req")->default(0);
+            $table->boolean("is_open")->default(false);
+            $table->boolean("is_empty")->default(false);
             $table->timestamps();
         });
     }

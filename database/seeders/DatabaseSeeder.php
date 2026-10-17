@@ -20,11 +20,15 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            DungeonLevelSeeder::class,
+            ItemSeeder::class,
         ]);
 
         $this->call([
-            ItemSeeder::class,
+            ChestSeeder::class,
+        ]);
+
+        $this->call([
+            DungeonLevelSeeder::class,
         ]);
     }
 }

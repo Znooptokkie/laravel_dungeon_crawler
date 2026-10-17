@@ -25,6 +25,8 @@
         inventoryItems: Object,
         enemyDetails: Array,
         enemyRoom: Array,
+        chestRoom: Object,
+        chestRooms: Array
     })
 </script>
 
@@ -62,6 +64,8 @@
             :direction="props.direction"
             :room="props.room"
             :enemy-room="props.enemyRoom"
+            :chest-room="props.chestRoom"
+            :chest-rooms="props.chestRooms"
         />
     </div>
     <div class="inventory-panel">

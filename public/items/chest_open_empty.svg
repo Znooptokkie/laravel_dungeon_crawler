@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 18" width="400" height="360" shape-rendering="crispEdges">
+  <title>Pixel art chest (open, empty)</title>
+  <!-- Outline -->
+  <g fill="#2b1a0e">
+    <rect x="3" y="1" width="14" height="1"/>
+    <rect x="2" y="2" width="1" height="14"/>
+    <rect x="17" y="2" width="1" height="14"/>
+    <rect x="2" y="16" width="16" height="1"/>
+  </g>
+
+  <!-- Open lid (inside, tilted back) -->
+  <rect x="3" y="2" width="14" height="1" fill="#5c3517"/>
+  <rect x="3" y="3" width="14" height="2" fill="#4a2a12"/>
+  <rect x="3" y="5" width="14" height="1" fill="#3a200d"/>
+  <!-- Lid bands (inside) -->
+  <g fill="#6f757a">
+    <rect x="5" y="2" width="1" height="4"/>
+    <rect x="14" y="2" width="1" height="4"/>
+  </g>
+  <!-- Lid wood grain -->
+  <g fill="#6b3f1d">
+    <rect x="8" y="3" width="2" height="1"/>
+    <rect x="11" y="4" width="2" height="1"/>
+    <rect x="7" y="4" width="1" height="1"/>
+  </g>
+  <!-- Lid half of the lock -->
+  <rect x="9" y="4" width="2" height="1" fill="#f2c230"/>
+  <rect x="9" y="5" width="2" height="1" fill="#b8860b"/>
+
+  <!-- Back rim of the chest -->
+  <rect x="3" y="6" width="14" height="1" fill="#9aa0a6"/>
+
+  <!-- Chest interior (empty, black) -->
+  <rect x="3" y="7" width="14" height="2" fill="#000000"/>
+
+  <!-- Front seam (metal) -->
+  <rect x="3" y="9" width="14" height="1" fill="#9aa0a6"/>
+
+  <!-- Front of the body -->
+  <rect x="3" y="10" width="14" height="4" fill="#8f5a2b"/>
+  <rect x="3" y="14" width="14" height="2" fill="#6b3f1d"/>
+
+  <!-- Wood highlights -->
+  <g fill="#b57a3c">
+    <rect x="11" y="11" width="3" height="1"/>
+    <rect x="7" y="12" width="2" height="1"/>
+    <rect x="4" y="11" width="1" height="1"/>
+  </g>
+
+  <!-- Front vertical metal bands -->
+  <g fill="#9aa0a6">
+    <rect x="5" y="9" width="1" height="7"/>
+    <rect x="14" y="9" width="1" height="7"/>
+  </g>
+  <g fill="#d0d5da">
+    <rect x="5" y="9" width="1" height="1"/>
+    <rect x="14" y="9" width="1" height="1"/>
+    <rect x="5" y="12" width="1" height="1"/>
+    <rect x="14" y="12" width="1" height="1"/>
+  </g>
+
+  <!-- Gold lock (front) -->
+  <rect x="9" y="10" width="2" height="1" fill="#b8860b"/>
+  <rect x="9" y="11" width="2" height="3" fill="#f2c230"/>
+  <rect x="9" y="13" width="2" height="1" fill="#b8860b"/>
+  <rect x="10" y="12" width="1" height="1" fill="#2b1a0e"/>
+
+  <!-- Shadow -->
+  <rect x="3" y="17" width="14" height="1" fill="#000" opacity="0.25"/>
+</svg>

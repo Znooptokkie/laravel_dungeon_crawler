@@ -13,6 +13,7 @@ class Armor extends Model
 
     protected $fillable = [
         "name",
+        "rarity",
         "armor_added",
         "armor_part",
         "health_added",

@@ -1,4 +1,5 @@
 <script setup>
+    import ChestAsset from '../assets/ChestAsset.vue';
     import DoorAsset from '../assets/DoorAsset.vue';
     import EnemyEntity from "../entities/EnemyEntity.vue";
 
@@ -8,6 +9,9 @@
         hasChest: Boolean,
         chestOpened: Boolean,
         enemyDetails: Array,
+        chestRoom: Object,
+        room: Object,
+        showChestPopup: Boolean,
     });
 </script>
 
@@ -49,11 +53,26 @@
                 :locked="door.is_locked"
             />
         </div>
+
+        <div class="chests">
+            <ChestAsset
+                v-if="room?.room_id === chestRoom?.room_id"
+                :chest-room="chestRoom"
+                :show-chest-popup="showChestPopup"
+                :chest-items="chestRoom.chestItems"
+            />
+        </div>
     </div>
 </template>
 
 <style scoped lang="scss">
     @import '../../../css/_variables';
+
+    pre
+    {
+        margin-left: 500px;
+        z-index: 1000;
+    }
 
     h1
     {

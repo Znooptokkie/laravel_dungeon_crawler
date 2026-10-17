@@ -5,7 +5,9 @@
         roomInfo: Array,
         direction: Number,
         room: Object,
-        enemyRoom: Array
+        enemyRoom: Array,
+        chestRoom: Object,
+        chestRooms: Array
     })
 
     // Positie veranderd afhankelijk van de direction de speler loopt
@@ -17,6 +19,40 @@
     }
 
     const roomPositions = {}
+
+    function drawChest()
+    {
+        const svgNS = "http://www.w3.org/2000/svg"
+        const svg = document.getElementById("minimap-svg")
+
+        for (const chest of props.chestRooms)
+        {
+            const chestRoom = roomPositions[chest.room_id]
+
+            if (!chestRoom)
+                continue
+
+            const path = document.createElementNS(svgNS, "path")
+
+            const x = chestRoom.x
+            const y = chestRoom.y
+
+            path.setAttribute(
+                "d",
+                `M ${575 + x} ${1110 + y}
+                 L ${585 + x} ${1120 + y}
+                 L ${575 + x} ${1130 + y}
+                 L ${565 + x} ${1120 + y}
+                 Z`
+            )
+
+            path.setAttribute("fill", "yellow")
+            path.setAttribute("stroke", "none")
+            path.setAttribute("class", "chest-marker")
+
+            svg.appendChild(path)
+        }
+    }
 
     function drawRoom(xValue, yValue)
     {
@@ -120,6 +156,10 @@
                 door => door.room_id == roomId
             )
 
+            // Stel speler gaat naar "right", dan draaien de getallen met de klok mee
+            // Dus 0 = 1, 1 = 2, 2 = 3, 3 = 0
+            // Naar links tegen de klok in
+            // Dus 0 = 3, 1 = 0, 2 = 1, 3 = 2
             for (let i = 0; i < roomDoors.length; i++)
             {
                 const door = roomDoors[i]
@@ -168,6 +208,7 @@
             }
         }
 
+        // Start met het invullen van de start room
         drawRooms(1, 0, 0, 0)
     }
 
@@ -238,12 +279,12 @@
             )
         }
 
-        path.setAttribute("fill", "yellow")
+        path.setAttribute("fill", "cyan")
         path.setAttribute("stroke", "none")
 
         svg.appendChild(path)
     }
-    console.log(props.enemyDetails)
+
     function drawEnemy()
     {
         const svgNS = "http://www.w3.org/2000/svg"
@@ -300,7 +341,7 @@
              Z`
         )
 
-        path.setAttribute("fill", "yellow")
+        path.setAttribute("fill", "cyan")
         path.setAttribute("stroke", "none")
 
         svg.appendChild(path)
@@ -343,7 +384,7 @@
         const enemyText = document.createElementNS(svgNS, "text")
 
         enemyText.setAttribute("x", "50")
-        enemyText.setAttribute("y", "175")
+        enemyText.setAttribute("y", "170")
         enemyText.setAttribute("fill", "#948d7f")
         enemyText.setAttribute("font-size", "66")
         enemyText.setAttribute("font-family", "sans-serif")
@@ -352,11 +393,41 @@
         enemyText.textContent = "Enemy"
 
         svg.appendChild(enemyText)
+
+        const chestPath = document.createElementNS(svgNS, "path")
+
+        chestPath.setAttribute(
+            "d",
+            `M -20 200
+             L 10 230
+             L -20 260
+             L -50 230
+             Z`
+        )
+
+        chestPath.setAttribute("fill", "yellow")
+        chestPath.setAttribute("stroke", "none")
+
+        svg.appendChild(chestPath)
+
+        const chestText = document.createElementNS(svgNS, "text")
+
+        chestText.setAttribute("x", "50")
+        chestText.setAttribute("y", "260")
+        chestText.setAttribute("fill", "#948d7f")
+        chestText.setAttribute("font-size", "66")
+        chestText.setAttribute("font-family", "sans-serif")
+        chestText.setAttribute("font-weight", "bold")
+
+        chestText.textContent = "Chest"
+
+        svg.appendChild(chestText)
     }
 
     onMounted(() => {
         createRooms()
         drawEnemy()
+        drawChest()
         playerLocation(props.direction, null)
         drawLegenda()
     })
@@ -366,7 +437,7 @@
             () => props.direction,
             () => props.room?.room_id
         ],
-        ([newDirection]) =>
+        ([newDirection, newRoomID]) =>
         {
             playerLocation(newDirection)
         }
